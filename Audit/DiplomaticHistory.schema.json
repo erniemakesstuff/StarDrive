@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://stardrive.example/schemas/DiplomaticHistory.json",
+  "title": "DiplomaticHistory",
+  "description": "JSON-based diplomatic event history, stored as sidecar to save file (Persistence_Analysis Option B)",
+  "type": "object",
+  "required": ["version", "saveId", "starDate", "events"],
+  "properties": {
+    "version": {
+      "type": "integer",
+      "const": 1,
+      "description": "Schema version for forward compatibility"
+    },
+    "saveId": {
+      "type": "string",
+      "description": "Links to main save file (e.g. save name or path)"
+    },
+    "starDate": {
+      "type": "number",
+      "description": "Current game star date (for temporal queries)"
+    },
+    "events": {
+      "type": "array",
+      "description": "Chronological list of diplomatic events",
+      "items": { "$ref": "#/definitions/DiplomaticEvent" }
+    }
+  },
+  "definitions": {
+    "DiplomaticEvent": {
+      "type": "object",
+      "required": ["id", "type", "starDate", "empireIds"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Unique event identifier"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "WarDeclared",
+            "PeaceSigned",
+            "TreatySigned",
+            "TreatyBroken",
+            "AllianceFormed",
+            "AllianceBroken",
+            "ColonyCaptured",
+            "InvasionStarted",
+            "Colonized",
+            "FirstContact",
+            "DemandRejected",
+            "OfferAccepted",
+            "OfferRejected"
+          ]
+        },
+        "starDate": {
+          "type": "number",
+          "description": "Game star date when event occurred"
+        },
+        "empireIds": {
+          "type": "array",
+          "items": { "type": "integer" },
+          "minItems": 1,
+          "description": "Order matters: actor, target, optional third (e.g. ally)"
+        },
+        "planetId": {
+          "type": "integer",
+          "description": "Optional; for ColonyCaptured, Colonized"
+        },
+        "systemId": {
+          "type": "integer",
+          "description": "Optional; for InvasionStarted"
+        },
+        "treatyType": {
+          "type": "string",
+          "enum": ["Alliance", "NonAggression", "OpenBorders", "Trade", "Peace"]
+        },
+        "warType": {
+          "type": "string",
+          "enum": ["BorderConflict", "ImperialistWar", "GenocidalWar", "DefensiveWar", "SkirmishWar", "EmpireDefense"]
+        },
+        "offerType": {
+          "type": "string",
+          "description": "Alliance, Peace, NAPact, Trade, etc."
+        },
+        "attitude": {
+          "type": "string",
+          "enum": ["Pleading", "Respectful", "Threaten"]
+        },
+        "llmNarrative": {
+          "type": "string",
+          "description": "Optional LLM-generated one-line summary for UI/history screen"
+        }
+      }
+    }
+  }
+}
